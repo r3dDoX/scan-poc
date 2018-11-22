@@ -1,25 +1,12 @@
-const constraints = window.constraints = {
-    audio: false,
-    video: {facingMode: {exact: 'environment'}}
-};
+const input = window.querySelector('input');
+const canvas = window.querySelector('canvas');
 
-const video = document.querySelector('video');
-const button = document.querySelector('button');
-const canvas = window.canvas = document.querySelector('canvas');
+input.addEventListener('change', handleFiles, false);
 
-button.addEventListener('click', () => {
-    video.classList.remove('fullscreen');
-    video.classList.add('hidden');
-    canvas.classList.add('fullscreen');
-    canvas.classList.remove('hidden');
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-});
-
-navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then(stream => {
-        video.srcObject = stream;
-    });
+function handleFiles(e) {
+    var ctx = canvas.getContext('2d');
+    var url = URL.createObjectURL(e.target.files[0]);
+    var img = new Image();
+    img.onload = () => ctx.drawImage(img, 20, 20);
+    img.src = url;
+}
