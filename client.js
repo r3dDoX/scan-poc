@@ -22,14 +22,3 @@ navigator.mediaDevices
         window.stream = stream; // make variable available to browser console
         video.srcObject = stream;
     });
-
-navigator.mediaDevices
-    .enumerateDevices()
-    .then(devices => {
-        const list = document.getElementById('devices');
-        devices.forEach(device => {
-            const element = document.createElement('li');
-            element.innerHTML = `${device.kind}: ${device.label} id = ${device.deviceId}`;
-            list.appendChild(element);
-        })
-    });

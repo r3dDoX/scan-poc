@@ -9,11 +9,12 @@
     >
     <meta name="mobile-web-app-capable" content="yes">
     <title>Scan POC</title>
+    <link href="main.css" rel="stylesheet">
     <script src="node_modules/webrtc-adapter/out/adapter.js"></script>
 </head>
 <body>
-<video playsinline autoplay></video>
-<button>Capture</button>
+<video playsinline autoplay class="fullscreen"></video>
+<button class="bottom">Capture</button>
 <canvas></canvas>
 <ul id="devices"></ul>
 <script src="client.js"></script>
