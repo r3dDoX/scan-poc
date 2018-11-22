@@ -3,16 +3,33 @@ const constraints = window.constraints = {
     video: true
 };
 
+const video = document.querySelector('video');
+const button = document.querySelector('button');
+const canvas = window.canvas = document.querySelector('canvas');
+canvas.width = 480;
+canvas.height = 360;
+
+button.addEventListener('click', () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+});
+
 navigator.mediaDevices
     .getUserMedia(constraints)
     .then(stream => {
-        const video = document.querySelector('video');
         const videoTracks = stream.getVideoTracks();
-
-        console.log('Got stream with constraints:', constraints);
-        console.log(`Using video device: ${videoTracks[0].label}`);
-        console.log(videoTracks[0]);
-
         window.stream = stream; // make variable available to browser console
         video.srcObject = stream;
+    });
+
+navigator.mediaDevices
+    .enumerateDevices()
+    .then(devices => {
+        const list = document.getElementById('devices');
+        devices.forEach(device => {
+            const element = document.createElement('li');
+            element.innerHTML = `${device.kind}: ${device.label} id = ${device.deviceId}`;
+            list.appendChild(element);
+        })
     });
