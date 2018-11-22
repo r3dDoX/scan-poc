@@ -6,8 +6,6 @@ const constraints = window.constraints = {
 const video = document.querySelector('video');
 const button = document.querySelector('button');
 const canvas = window.canvas = document.querySelector('canvas');
-canvas.width = 480;
-canvas.height = 360;
 
 button.addEventListener('click', () => {
     video.classList.remove('fullscreen');
