@@ -15,6 +15,7 @@ button.addEventListener('click', () => {
     button.classList.add('hidden');
     canvas.classList.add('fullscreen');
     canvas.classList.remove('hidden');
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -23,7 +24,5 @@ button.addEventListener('click', () => {
 navigator.mediaDevices
     .getUserMedia(constraints)
     .then(stream => {
-        const videoTracks = stream.getVideoTracks();
-        window.stream = stream; // make variable available to browser console
         video.srcObject = stream;
     });
