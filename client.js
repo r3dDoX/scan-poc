@@ -10,13 +10,13 @@ canvas.width = 480;
 canvas.height = 360;
 
 button.addEventListener('click', () => {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
     video.classList.remove('fullscreen');
     video.classList.add('hidden');
     canvas.classList.add('fullscreen');
     canvas.classList.remove('hidden');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 });
 
 navigator.mediaDevices
