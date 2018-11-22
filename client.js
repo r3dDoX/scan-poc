@@ -12,6 +12,7 @@ canvas.height = 360;
 button.addEventListener('click', () => {
     video.classList.remove('fullscreen');
     video.classList.add('hidden');
+    button.classList.add('hidden');
     canvas.classList.add('fullscreen');
     canvas.classList.remove('hidden');
     canvas.width = video.videoWidth;
