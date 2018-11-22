@@ -13,10 +13,8 @@ button.addEventListener('click', () => {
     canvas.classList.add('fullscreen');
     canvas.classList.remove('hidden');
 
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    canvas.getContext('2d').scale(ratio, ratio);
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 });
 
