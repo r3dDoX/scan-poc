@@ -1,6 +1,6 @@
 const constraints = window.constraints = {
     audio: false,
-    video: true
+    video: {facingMode: {exact: 'environment'}}
 };
 
 const video = document.querySelector('video');
