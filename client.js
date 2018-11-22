@@ -1,5 +1,5 @@
-const input = window.querySelector('input');
-const canvas = window.querySelector('canvas');
+const input = document.querySelector('input');
+const canvas = document.querySelector('canvas');
 
 input.addEventListener('change', handleFiles, false);
 
