@@ -136,12 +136,11 @@ function getDataUrlFromCroppedImage(ctx, img, width, height) {
     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
     ctx.restore();
 
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
     const croppedCanvas = document.createElement('canvas');
-    const croppedContext = croppedCanvas.getContext('2d');
     croppedCanvas.width = getCropWidth();
     croppedCanvas.height = getCropHeight();
-    croppedContext.drawImage(canvas, getMinX(), getMinY(), croppedCanvas.width, croppedCanvas.height, 0, 0, croppedCanvas.width, croppedCanvas.height);
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    croppedCanvas.getContext('2d').drawImage(canvas, getMinX() * ratio, getMinY() * ratio, croppedCanvas.width * ratio, croppedCanvas.height * ratio, 0, 0, croppedCanvas.width, croppedCanvas.height);
     dataUrl = croppedCanvas.toDataURL();
 }
 
