@@ -9,7 +9,11 @@ let downEvent;
 let moveEvent;
 let upEvent;
 
-if (window.ontouchstart) {
+if ('onpointerdown' in document.documentElement) {
+    downEvent = 'pointerdown';
+    moveEvent = 'pointermove';
+    upEvent = 'pointerup';
+} else if ('ontouchstart' in document.documentElement) {
     downEvent = 'touchstart';
     moveEvent = 'touchmove';
     upEvent = 'touchend';
@@ -49,7 +53,7 @@ function getMousePos(evt) {
 }
 
 function moveTouchPoint(touchPoint, event) {
-    const mousePosition = getMousePos(event);
+    const mousePosition = getMousePos(event.targetTouches ? event.targetTouches[0] : event);
     touchPoint.x =  mousePosition.x < 0
         ? 0
         : mousePosition.x > canvas.offsetWidth
