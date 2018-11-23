@@ -18,6 +18,7 @@ function getMousePos(evt) {
 }
 
 function moveTouchPoint(touchPoint, event) {
+    event.preventDefault();
     const mousePosition = getMousePos(event);
     touchPoint.x = mousePosition.x;
     touchPoint.y = mousePosition.y;
