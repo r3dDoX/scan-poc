@@ -10,6 +10,7 @@ html, body {
     width: 375px;
     height: 375px;
     z-index: 1;
+    touch-action: none;
 }
 
 #cropped {

@@ -1,13 +1,17 @@
 const input = document.querySelector('input');
 const canvas = document.getElementById('original');
+const button = document.querySelector('button');
 const corners = [];
-const TP_RADIUS = 10;
+const TP_RADIUS = 15;
 let dataUrl;
 
 input.addEventListener('change', handleFiles, false);
 
-function imageRenderingLoop(lastImage) {
-    lastImage && document.body.removeChild(lastImage);
+let currentShownImage;
+button.addEventListener('click', renderCroppedImage);
+
+function renderCroppedImage() {
+    currentShownImage && document.body.removeChild(currentShownImage);
     let clippedImage;
     if (dataUrl) {
         clippedImage = new Image();
@@ -15,10 +19,8 @@ function imageRenderingLoop(lastImage) {
         clippedImage.onload = () => document.body.appendChild(clippedImage);
         clippedImage.src = dataUrl;
     }
-    window.setTimeout(() => imageRenderingLoop(clippedImage), 500);
+    currentShownImage = clippedImage;
 }
-
-imageRenderingLoop();
 
 function isIntersect(point, circle) {
     return Math.sqrt(Math.pow(point.x - circle.x, 2) + Math.pow(point.y - circle.y, 2)) < TP_RADIUS;
@@ -34,8 +36,16 @@ function getMousePos(evt) {
 
 function moveTouchPoint(touchPoint, event) {
     const mousePosition = getMousePos(event);
-    touchPoint.x = mousePosition.x;
-    touchPoint.y = mousePosition.y;
+    touchPoint.x =  mousePosition.x < 0
+        ? 0
+        : mousePosition.x > canvas.offsetWidth
+            ? canvas.offsetWidth
+            : mousePosition.x;
+    touchPoint.y = mousePosition.y < 0
+        ? 0
+        : mousePosition.y > canvas.offsetHeight
+            ? canvas.offsetHeight
+            : mousePosition.y;
 }
 
 window.onload = () => {
@@ -46,11 +56,10 @@ window.onload = () => {
 
     canvas.addEventListener('pointerdown', event => {
         let mousePosition = getMousePos(event);
-        console.log(mousePosition);
         const touchPoint = corners.find(touchPoint => isIntersect(mousePosition, touchPoint));
         if (touchPoint) {
             const boundMoveTouchPoint = moveTouchPoint.bind(null, touchPoint);
-            canvas.addEventListener('pointermove', boundMoveTouchPoint);
+            canvas.addEventListener('pointermove', boundMoveTouchPoint, {passive: true});
             window.addEventListener('pointerup', () => canvas.removeEventListener('pointermove', boundMoveTouchPoint))
         }
     });
@@ -106,10 +115,12 @@ function getDataUrlFromCroppedImage(ctx, img, width, height) {
     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
     ctx.restore();
 
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
     const croppedCanvas = document.createElement('canvas');
+    const croppedContext = croppedCanvas.getContext('2d');
     croppedCanvas.width = getCropWidth();
     croppedCanvas.height = getCropHeight();
-    croppedCanvas.getContext('2d').drawImage(canvas, getMinX(), getMinY(), croppedCanvas.width, croppedCanvas.height, 0, 0, croppedCanvas.width, croppedCanvas.height);
+    croppedContext.drawImage(canvas, getMinX(), getMinY(), croppedCanvas.width, croppedCanvas.height, 0, 0, croppedCanvas.width, croppedCanvas.height);
     dataUrl = croppedCanvas.toDataURL();
 }
 
