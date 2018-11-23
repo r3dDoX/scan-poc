@@ -54,6 +54,7 @@ function getMousePos(event) {
 }
 
 function moveTouchPoint(touchPoint, event) {
+    event.preventDefault();
     const mousePosition = getMousePos(event);
     touchPoint.x = mousePosition.x < 0
         ? 0
@@ -74,14 +75,15 @@ window.onload = () => {
     canvas.getContext('2d').scale(ratio, ratio);
 
     canvas.addEventListener(downEvent, event => {
+        event.preventDefault();
         let mousePosition = getMousePos(event);
         const touchPoint = corners.find(touchPoint => isIntersect(mousePosition, touchPoint));
         if (touchPoint) {
             const boundMoveTouchPoint = moveTouchPoint.bind(null, touchPoint);
-            canvas.addEventListener(moveEvent, boundMoveTouchPoint, {passive: true});
+            canvas.addEventListener(moveEvent, boundMoveTouchPoint);
             window.addEventListener(upEvent, () => canvas.removeEventListener(moveEvent, boundMoveTouchPoint))
         }
-    }, {passive: true});
+    });
 };
 
 function getTouchPointPath(x, y) {
