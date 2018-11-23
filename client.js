@@ -1,5 +1,5 @@
 const input = document.querySelector('input');
-const canvas = document.querySelector('canvas');
+const canvas = document.getElementById('original');
 const corners = [];
 const TP_RADIUS = 10;
 
@@ -18,7 +18,6 @@ function getMousePos(evt) {
 }
 
 function moveTouchPoint(touchPoint, event) {
-    event.preventDefault();
     const mousePosition = getMousePos(event);
     touchPoint.x = mousePosition.x;
     touchPoint.y = mousePosition.y;
@@ -30,13 +29,14 @@ window.onload = () => {
     canvas.height = canvas.offsetHeight * ratio;
     canvas.getContext('2d').scale(ratio, ratio);
 
-    canvas.addEventListener('touchstart', event => {
+    canvas.addEventListener('pointerdown', event => {
         let mousePosition = getMousePos(event);
+        console.log(mousePosition);
         const touchPoint = corners.find(touchPoint => isIntersect(mousePosition, touchPoint));
         if (touchPoint) {
             const boundMoveTouchPoint = moveTouchPoint.bind(null, touchPoint);
-            canvas.addEventListener('touchmove', boundMoveTouchPoint);
-            window.addEventListener('touchend', () => canvas.removeEventListener('touchmove', boundMoveTouchPoint))
+            canvas.addEventListener('pointermove', boundMoveTouchPoint);
+            window.addEventListener('pointerup', () => canvas.removeEventListener('pointermove', boundMoveTouchPoint))
         }
     });
 };
@@ -69,6 +69,47 @@ function getPath() {
     return path;
 }
 
+function getMinX() {
+    return Math.min(...corners.map(corner => corner.x));
+}
+
+function getMinY() {
+    return Math.min(...corners.map(corner => corner.y));
+}
+
+function getCropWidth() {
+    return Math.max(...corners.map(corner => corner.x)) - getMinX();
+}
+
+function getCropHeight() {
+    return Math.max(...corners.map(corner => corner.y)) - getMinY();
+}
+
+function getDataUrlFromCroppedImage(ctx, img, width, height) {
+    ctx.save();
+    ctx.clip(getPath());
+    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+    ctx.restore();
+
+    const croppedCanvas = document.createElement('canvas');
+    const croppedCtx = croppedCanvas.getContext('2d');
+    croppedCtx.width = getCropWidth();
+    croppedCtx.height = getCropHeight();
+    croppedCtx.drawImage(canvas, getMinX(), getMinY(), croppedCtx.width, croppedCtx.height, 0, 0, croppedCtx.width, croppedCtx.height);
+    document.querySelector('#cropped').src = croppedCanvas.toDataURL();
+}
+
+function renderBlurryCroppedImage(ctx, img, width, height) {
+    ctx.filter = 'blur(4px)';
+    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+    ctx.filter = 'none';
+
+    ctx.save();
+    ctx.clip(getPath());
+    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+    ctx.restore();
+}
+
 function drawCropShape(width, height, img) {
     const ctx = canvas.getContext('2d');
 
@@ -79,29 +120,26 @@ function drawCropShape(width, height, img) {
         corners.push({x: width - 40, y: 40});
     }
 
-
-    ctx.save();
-    ctx.clip(getPath());
-    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
-    ctx.restore();
+    getDataUrlFromCroppedImage(ctx, img, width, height);
+    renderBlurryCroppedImage(ctx, img, width, height);
 
     ctx.stroke(getPath());
     corners.forEach(touchPoint => drawTouchPoint(touchPoint.x, touchPoint.y));
 }
 
 function drawImage(img) {
-    const ctx = canvas.getContext('2d');
     const destWidth = canvas.offsetWidth;
     const destHeight = img.height * (canvas.offsetWidth / img.width);
-    ctx.filter = 'blur(4px)';
-    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, destWidth, destHeight);
-    ctx.filter = 'none';
     drawCropShape(destWidth, destHeight, img);
 }
 
-function loop(img) {
+function clearCanvas() {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function loop(img) {
+    clearCanvas();
     drawImage(img);
     window.requestAnimationFrame(() => loop(img));
 }

@@ -1,8 +1,20 @@
-.fullscreen {
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+#original {
     position: absolute;
     top: 50px;
     left: 0;
-    width: 100%;
-    height: calc(100% - 50px);
+    width: 375px;
+    height: 300px;
+    z-index: 1;
+}
+
+#cropped {
+    position: absolute;
+    top: 350px;
+    left: 0;
     z-index: 1;
 }
