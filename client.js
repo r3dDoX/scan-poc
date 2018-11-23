@@ -5,6 +5,20 @@ const corners = [];
 const TP_RADIUS = 15;
 let dataUrl;
 
+let downEvent;
+let moveEvent;
+let upEvent;
+
+if (window.ontouchstart) {
+    downEvent = 'touchstart';
+    moveEvent = 'touchmove';
+    upEvent = 'touchend';
+} else {
+    downEvent = 'mousedown';
+    moveEvent = 'mousemove';
+    upEvent = 'mouseup';
+}
+
 input.addEventListener('change', handleFiles, false);
 
 let currentShownImage;
@@ -54,13 +68,13 @@ window.onload = () => {
     canvas.height = canvas.offsetHeight * ratio;
     canvas.getContext('2d').scale(ratio, ratio);
 
-    canvas.addEventListener('pointerdown', event => {
+    canvas.addEventListener(downEvent, event => {
         let mousePosition = getMousePos(event);
         const touchPoint = corners.find(touchPoint => isIntersect(mousePosition, touchPoint));
         if (touchPoint) {
             const boundMoveTouchPoint = moveTouchPoint.bind(null, touchPoint);
-            canvas.addEventListener('pointermove', boundMoveTouchPoint, {passive: true});
-            window.addEventListener('pointerup', () => canvas.removeEventListener('pointermove', boundMoveTouchPoint))
+            canvas.addEventListener(moveEvent, boundMoveTouchPoint, {passive: true});
+            window.addEventListener(upEvent, () => canvas.removeEventListener(moveEvent, boundMoveTouchPoint))
         }
     });
 };
