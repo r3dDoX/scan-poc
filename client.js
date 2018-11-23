@@ -44,18 +44,18 @@ function isIntersect(point, circle) {
     return Math.sqrt(Math.pow(point.x - circle.x, 2) + Math.pow(point.y - circle.y, 2)) < TP_RADIUS;
 }
 
-function getMousePos(evt) {
+function getMousePos(event) {
+    const {clientX, clientY} = event.targetTouches ? event.targetTouches[0] : event;
     const {top, left} = canvas.getBoundingClientRect();
     return {
-        x: evt.clientX - left,
-        y: evt.clientY - top,
+        x: clientX - left,
+        y: clientY - top,
     };
 }
 
 function moveTouchPoint(touchPoint, event) {
-    event.preventDefault();
-    const mousePosition = getMousePos(event.targetTouches ? event.targetTouches[0] : event);
-    touchPoint.x =  mousePosition.x < 0
+    const mousePosition = getMousePos(event);
+    touchPoint.x = mousePosition.x < 0
         ? 0
         : mousePosition.x > canvas.offsetWidth
             ? canvas.offsetWidth
@@ -74,7 +74,6 @@ window.onload = () => {
     canvas.getContext('2d').scale(ratio, ratio);
 
     canvas.addEventListener(downEvent, event => {
-        event.preventDefault();
         let mousePosition = getMousePos(event);
         const touchPoint = corners.find(touchPoint => isIntersect(mousePosition, touchPoint));
         if (touchPoint) {
@@ -82,7 +81,7 @@ window.onload = () => {
             canvas.addEventListener(moveEvent, boundMoveTouchPoint, {passive: true});
             window.addEventListener(upEvent, () => canvas.removeEventListener(moveEvent, boundMoveTouchPoint))
         }
-    });
+    }, {passive: true});
 };
 
 function getTouchPointPath(x, y) {
