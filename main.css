@@ -8,13 +8,13 @@ html, body {
     top: 50px;
     left: 0;
     width: 375px;
-    height: 300px;
+    height: 375px;
     z-index: 1;
 }
 
 #cropped {
     position: absolute;
-    top: 350px;
+    top: 450px;
     left: 0;
     z-index: 1;
 }

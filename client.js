@@ -2,8 +2,23 @@ const input = document.querySelector('input');
 const canvas = document.getElementById('original');
 const corners = [];
 const TP_RADIUS = 10;
+let dataUrl;
 
 input.addEventListener('change', handleFiles, false);
+
+function imageRenderingLoop(lastImage) {
+    lastImage && document.body.removeChild(lastImage);
+    let clippedImage;
+    if (dataUrl) {
+        clippedImage = new Image();
+        clippedImage.id = 'cropped';
+        clippedImage.onload = () => document.body.appendChild(clippedImage);
+        clippedImage.src = dataUrl;
+    }
+    window.setTimeout(() => imageRenderingLoop(clippedImage), 500);
+}
+
+imageRenderingLoop();
 
 function isIntersect(point, circle) {
     return Math.sqrt(Math.pow(point.x - circle.x, 2) + Math.pow(point.y - circle.y, 2)) < TP_RADIUS;
@@ -95,8 +110,9 @@ function getDataUrlFromCroppedImage(ctx, img, width, height) {
     const croppedCtx = croppedCanvas.getContext('2d');
     croppedCtx.width = getCropWidth();
     croppedCtx.height = getCropHeight();
+    console.log({ width: getCropWidth(), height: getCropHeight()});
     croppedCtx.drawImage(canvas, getMinX(), getMinY(), croppedCtx.width, croppedCtx.height, 0, 0, croppedCtx.width, croppedCtx.height);
-    document.querySelector('#cropped').src = croppedCanvas.toDataURL();
+    dataUrl = croppedCanvas.toDataURL();
 }
 
 function renderBlurryCroppedImage(ctx, img, width, height) {
