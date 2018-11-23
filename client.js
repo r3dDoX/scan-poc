@@ -29,13 +29,13 @@ window.onload = () => {
     canvas.height = canvas.offsetHeight * ratio;
     canvas.getContext('2d').scale(ratio, ratio);
 
-    canvas.addEventListener('pointerdown', event => {
+    canvas.addEventListener('touchstart', event => {
         let mousePosition = getMousePos(event);
         const touchPoint = corners.find(touchPoint => isIntersect(mousePosition, touchPoint));
         if (touchPoint) {
             const boundMoveTouchPoint = moveTouchPoint.bind(null, touchPoint);
-            canvas.addEventListener('pointermove', boundMoveTouchPoint);
-            window.addEventListener('pointerup', () => canvas.removeEventListener('pointermove', boundMoveTouchPoint))
+            canvas.addEventListener('touchmove', boundMoveTouchPoint);
+            window.addEventListener('touchend', () => canvas.removeEventListener('touchmove', boundMoveTouchPoint))
         }
     });
 };
